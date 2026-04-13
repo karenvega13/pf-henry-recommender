@@ -68,7 +68,6 @@ cross-selling-recommender/
 │   └── streamlit/             # Demo interactivo (Sprint 2)
 ├── configs/config.yaml        # Parámetros globales
 ├── requirements.txt
-├── PROGRESS.md                # Estado del proyecto por sesión
 └── .gitignore
 ```
 
@@ -129,25 +128,3 @@ jupyter notebook notebooks/03_modeling/03_association_rules.ipynb
 - **CRISP-DM** (IBM): Entendimiento del negocio → Datos → Modelado → Evaluación → Despliegue
 - **Scrum**: Sprints semanales con Daily Stand-ups, Sprint Review y Retrospective
 
----
-
-## Equipo
-
-| Rol | Nombre |
-|---|---|
-| Product Owner | [Henry] |
-| Scrum Master | [Nombre] |
-| Data Scientist | [Nombre] |
-| Data Scientist | [Nombre] |
-
----
-
-## Sprint Progress
-
-| Sprint | Estado | Entregables |
-|---|---|---|
-| Propuesta | ✅ Aprobada | Documento de propuesta |
-| Sprint 1 | 🚀 En progreso | EDA, ETL, 2 modelos baseline |
-| Sprint 2 | 🔜 Pendiente | API, Demo, Dashboard |
-
-Ver [PROGRESS.md](PROGRESS.md) para el estado detallado.
