@@ -1,0 +1,39 @@
+name: CI — Cross-Selling Recommender
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout código
+      uses: actions/checkout@v4
+
+    - name: Configurar Python 3.10
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+        cache: 'pip'
+
+    - name: Instalar dependencias
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install flake8 pytest pytest-cov
+
+    - name: Lint con flake8 (PEP 8)
+      run: |
+        # Errores graves: sintaxis y nombres no definidos
+        flake8 src/ --count --select=E9,F63,F7,F82 --show-source --statistics
+        # Advertencias de estilo (max 88 chars, compatible con black)
+        flake8 src/ --count --max-line-length=88 --statistics
+
+    - name: Ejecutar tests
+      run: |
+        pytest tests/ -v --cov=src --cov-report=term-missing
+      continue-on-error: true  # No bloquear si no hay tests aún

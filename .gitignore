@@ -1,0 +1,52 @@
+# ============================================================
+# .gitignore — Cross-Selling Recommender System
+# ============================================================
+
+# --- Data (nunca subir datos crudos) ---
+data/raw/*
+data/processed/*
+data/external/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/external/.gitkeep
+
+# --- Modelos serializados grandes ---
+models/trained/*.pkl
+models/trained/*.joblib
+models/trained/*.h5
+
+# --- MLflow ---
+mlruns/
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.env
+.venv
+env/
+venv/
+ENV/
+
+# --- Jupyter ---
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+*.swp
+
+# --- IDE ---
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# --- Secrets ---
+.env
+*.env
+secrets.yaml
+credentials.json

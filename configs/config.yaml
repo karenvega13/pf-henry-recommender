@@ -1,0 +1,108 @@
+# ============================================================
+# config.yaml — Parámetros globales del proyecto
+# Dataset: Instacart Market Basket Analysis
+# Proyecto Final | Data Science — Henry
+# ============================================================
+
+project:
+  name: "cross-selling-recommender"
+  version: "2.0.0"
+  dataset: "instacart-market-basket-analysis"
+
+paths:
+  raw_data: "data/raw/"
+  processed_data: "data/processed/"
+  external_data: "data/external/"
+  models: "models/trained/"
+  figures: "outputs/figures/"
+  reports: "outputs/reports/"
+  recommendations: "outputs/recommendations/"
+
+# -------------------------------------------------------
+# Archivos del dataset Instacart (6 CSV en data/raw/)
+# -------------------------------------------------------
+data:
+  files:
+    orders: "orders.csv"
+    order_products_prior: "order_products__prior.csv"
+    order_products_train: "order_products__train.csv"
+    products: "products.csv"
+    aisles: "aisles.csv"
+    departments: "departments.csv"
+
+  # Columnas clave por tabla
+  columns:
+    order_id: "order_id"
+    user_id: "user_id"
+    product_id: "product_id"
+    product_name: "product_name"
+    aisle_id: "aisle_id"
+    aisle: "aisle"
+    department_id: "department_id"
+    department: "department"
+    eval_set: "eval_set"
+    order_number: "order_number"
+    order_dow: "order_dow"              # día de semana (0=sáb, 1=dom)
+    order_hour: "order_hour_of_day"
+    days_since_prior: "days_since_prior_order"
+    reordered: "reordered"
+    add_to_cart_order: "add_to_cart_order"
+
+  # Filtros de limpieza
+  min_basket_items: 2           # órdenes con al menos 2 productos distintos
+  eval_set_train: "prior"       # split a usar para entrenamiento (prior=historial completo)
+
+  # Muestreo para Apriori (memoria):
+  # null = usar todos los datos (requiere ~16 GB RAM)
+  # int  = número de órdenes a muestrear aleatoriamente (ej. 200000)
+  apriori_sample_orders: 200000
+  random_state: 42
+
+# -------------------------------------------------------
+# Association Rules (Apriori / FP-Growth)
+# -------------------------------------------------------
+# Justificación de umbrales:
+#   Con ~200K órdenes muestreadas, min_support=0.01 implica que un
+#   par de productos aparece juntos en al menos 2,000 cestas.
+#   Esto es estadísticamente robusto y evita reglas por ruido.
+# -------------------------------------------------------
+association_rules:
+  algorithm: "fpgrowth"         # fpgrowth (más eficiente en memoria que apriori)
+  min_support: 0.01             # 1% de las transacciones muestreadas
+  min_confidence: 0.3           # 30% de confianza
+  min_lift: 1.2                 # Lift > 1.2 = asociación real y relevante
+  metric: "lift"
+  top_k: 10                     # Top 10 productos a recomendar
+
+# -------------------------------------------------------
+# Collaborative Filtering (ALS — Implicit Feedback)
+# -------------------------------------------------------
+# Justificación: Instacart no tiene ratings explícitos.
+#   La señal de interés es implícita: frecuencia de compra y
+#   flag 'reordered'. ALS (Alternating Least Squares) sobre
+#   feedback implícito supera a SVD estándar cuando sparsity > 99%.
+#   Librería: implicit (C. Johnson, 2016)
+# -------------------------------------------------------
+collaborative_filter:
+  algorithm: "als"              # ALS sobre feedback implícito
+  factors: 50                   # Dimensiones del espacio latente
+  iterations: 20                # Épocas de entrenamiento
+  regularization: 0.01          # Término de regularización L2
+  alpha: 40                     # Escala de confianza para feedback implícito
+  random_state: 42
+  test_size: 0.2
+
+evaluation:
+  k_values: [5, 10]             # Precision@K, Recall@K, NDCG@K
+  split_method: "temporal"      # temporal (por order_number) o random
+
+mlflow:
+  experiment_name: "cross-selling-instacart"
+  tracking_uri: "mlruns/"
+
+visualization:
+  style: "seaborn-v0_8-whitegrid"
+  palette: "muted"
+  figsize: [12, 6]
+  dpi: 150
+  save_format: "png"
